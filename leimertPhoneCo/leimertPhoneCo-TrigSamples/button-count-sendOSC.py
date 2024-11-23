@@ -27,7 +27,7 @@ def numberUp(upperLimit):
 
 def numberDown(lowerLimit):
     global count
-    count-=1    
+    count-=1
     if count < lowerLimit:
         count = lowerLimit
 
@@ -45,7 +45,7 @@ address = ''.join(["/", "engine"])
 
 # constructing the message
 msg.setAddress(str(address))
-msg.append(1)
+msg.append(0)
 
 while True:
     if buttonCountInc.is_pressed:
@@ -64,7 +64,6 @@ while True:
         if prevPressSendMessage == False:
             # OSC below
             #print(" ".join(["sending message:", str(count)]))
-            
             msg[0] = count
             client.send(msg)
             sleep(0.1)
