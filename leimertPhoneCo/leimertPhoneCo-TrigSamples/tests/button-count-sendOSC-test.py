@@ -31,10 +31,6 @@ def numberDown(lowerLimit):
     if count < lowerLimit:
         count = lowerLimit
 
-'''
-OSC setup
-'''
-
 # create OSCClient
 client = pyOSC3.OSCClient()
 client.connect(('127.0.0.1', 57120))
@@ -46,6 +42,10 @@ address = ''.join(["/", "engine"])
 # constructing the message
 msg.setAddress(str(address))
 msg.append(0)
+
+'''
+OSCServer
+'''
 
 while True:
     if buttonCountInc.is_pressed:
