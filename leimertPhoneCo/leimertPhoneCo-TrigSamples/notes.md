@@ -4,7 +4,7 @@
 
 Put the following in a file called `autostart.sh`
 
-```
+```bash
 #!/bin/bash
 export PATH=/usr/local/bin:$PATH
 export DISPLAY=:0.0
