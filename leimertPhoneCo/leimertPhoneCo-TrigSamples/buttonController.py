@@ -1,5 +1,5 @@
-import pyOSC3
-import threading
+from pyOSC3 import OSCClient, OSCMessage, OSCServer
+from threading import Thread
 from gpiozero import Button, LED
 from time import sleep
 
@@ -15,11 +15,12 @@ upperLimit = 6
 selection = 0
 nowPlaying = False
 
+'''
+Button Setup
+'''
 buttonCountInc = Button(27)
 buttonCountDec = Button(4)
-
 sendMessage = Button(22)
-
 nowPlayingLED = LED(23)
 runningLED = LED(24)
 
@@ -39,18 +40,19 @@ def numberDown(lowerLimit):
 '''
 OSC Client setup
 '''
-# create OSCClient
-client = pyOSC3.OSCClient()
-client.connect(("127.0.0.1", 57120))
+def createClient(ip, port):
+    client = OSCClient()
+    client.connect((ip, port))
+    return client
 
-# adding the address
-msg = pyOSC3.OSCMessage()
-address = ''.join(["/", "engine"])
+def createMessage(label):
+    # adding the address
+    msg = OSCMessage()
+    address = "".join(["/", str(label)])
 
-# constructing the message
-msg.setAddress(str(address))
-msg.append(0)
-
+    msg.setAddress(address)
+    msg.append(0)
+    return msg
 
 '''
 OSCServer setup
@@ -64,19 +66,23 @@ def handler(addr, tags, stuff, source):
         nowPlaying = False
 
 def startServer(address, port, label):
-    server = pyOSC3.OSCServer((address, port))
+    server = OSCServer((address, port))
     # Register a handler for the desired address
     server.addMsgHandler("".join(["/", str(label)]), handler)
     # Start the server
     server.serve_forever()
 
-
 if __name__ == "__main__":
+    print("OSC CLIENT STARTING!")
+
+    client = createClient("127.0.0.1", 57120)
+    msg = createMessage("engine")
+    
     print("OSC SERVER STARTING!")
     print()
     
     # Create a thread for the OSC server
-    osc_thread = threading.Thread(target=startServer, args=("127.0.0.1", 58110, "nowPlaying"))
+    osc_thread = Thread(target=startServer, args=("127.0.0.1", 58110, "nowPlaying"))
     osc_thread.daemon = True  # Make the thread a daemon so it exits when the main thread exits
     osc_thread.start()
 
